@@ -36,8 +36,12 @@ User.bulkCreate([
   },
 ])
   .then((users) => {
-    console.log(users);
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] ${users}`
+    );
   })
   .catch((error) => {
-    console.error(error);
+    console.error(
+      `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] ${error}`
+    );
   });

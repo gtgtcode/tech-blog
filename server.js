@@ -3,6 +3,7 @@ const exphbs = require("express-handlebars");
 const mysql = require("mysql2");
 const app = express();
 const path = require("path");
+const dayjs = require("dayjs");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const { User } = require("./models/User.js");
 const { Sequelize } = require("sequelize");
@@ -30,10 +31,19 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log("Connection has been established successfully.");
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Connection has been established successfully.`
+    );
   })
   .catch((error) => {
-    console.error("Unable to connect to the database:", error);
+    console.error(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Unable to connect to the database:`,
+      error
+    );
   });
 
 // Create a session store using connect-session-sequelize
@@ -80,10 +90,21 @@ app.post("/login", async (req, res) => {
   if (user) {
     req.session.username = req.body.username;
     req.session.isAuthenticated = true;
-    console.log(`User ${req.session.username} logged in`);
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] User ${
+        req.session.username
+      } logged in.`
+    );
     res.redirect("/");
   } else {
-    res.render("login", { error: "Invalid username or password" });
+    res.render("login", {
+      error: `Invalid username or password`,
+    });
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Invalid username or password.`
+    );
   }
 });
 
@@ -100,5 +121,9 @@ app.post("/logout", (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}/`);
+  console.log(
+    `[ ${dayjs(new Date().getTime()).format(
+      "hh:mm:ssA"
+    )} ] Server running on http://localhost:${port}/`
+  );
 });

@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+const dayjs = require("dayjs");
 
 const sequelize = new Sequelize(
   process.env.DATABASE,
@@ -50,10 +51,19 @@ const User = sequelize.define(
 sequelize
   .sync()
   .then(() => {
-    console.log("Users table created successfully.");
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Users table created successfully.`
+    );
   })
   .catch((error) => {
-    console.error("Unable to create Users table:", error);
+    console.error(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Unable to create Users table:`,
+      error
+    );
   });
 
 module.exports = { User };
