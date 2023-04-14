@@ -14,6 +14,8 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
 
+const headerTemplate = require("./views/header.handlebars");
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -77,13 +79,19 @@ const isAuthenticated = (req, res, next) => {
 // Routes
 app.get("/", isAuthenticated, async (req, res) => {
   const posts = await Post.findAll({});
-  console.log(JSON.stringify(posts));
-  res.render("index", { posts: JSON.stringify(posts) });
+  console.log(
+    `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] Posts fetched.`
+  );
+  const headerData = { username: req.session.username }; // Example data for the header template
+  const headerHtml = headerTemplate(headerData); // Render the header template
+  res.render("index", {
+    posts: JSON.parse(JSON.stringify(posts)),
+    header: headerHtml, // Pass the rendered HTML to the header property
+  });
 });
 
 app.get("/login", async (req, res) => {
   const users = await User.findAll({});
-  console.log(users);
   res.render("login", { users: JSON.stringify(users) });
 });
 
@@ -91,6 +99,7 @@ app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ where: { username, password } });
   if (user) {
+    req.session.userId = user.id;
     req.session.username = req.body.username;
     req.session.isAuthenticated = true;
     console.log(
@@ -116,7 +125,9 @@ app.post("/logout", (req, res) => {
     if (err) {
       console.error(err);
     } else {
-      console.log(`User logged out`);
+      console.log(
+        `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] User logged out`
+      );
       res.redirect("/login");
     }
   });
@@ -146,6 +157,16 @@ app.post("/signup", async (req, res) => {
       error: `Error creating user: ${error.message}`,
     });
   }
+});
+
+app.get("/posts/:id", isAuthenticated, async (req, res) => {
+  const post = await Post.findByPk(req.params.id);
+  const headerData = { username: req.session.username }; // Example data for the header template
+  const headerHtml = headerTemplate(headerData); // Render the header template
+  res.render("post", {
+    post: JSON.parse(JSON.stringify(post)),
+    header: headerHtml, // Pass the rendered HTML to the header property
+  });
 });
 
 const port = process.env.PORT || 3000;

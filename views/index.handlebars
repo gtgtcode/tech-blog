@@ -1,8 +1,18 @@
-<ul>
-  {{#each posts}}
-    <li>
-      <h2>{{posts.title}}</h2>
-      <p>{{posts.content}}</p>
-    </li>
-  {{/each}}
-</ul>
+<div
+  id="post-container"
+  class="container mx-auto mt-12 rounded-[40px] p-6 shadow-2xl bg-white"
+>
+  {{{header}}}
+
+  <ul class="w-1/2 container mx-auto">
+    {{#each posts}}
+      <a href="/posts/{{id}}"><li
+          class="p-4 my-4 rounded-[40px] p-6 shadow-2xl"
+        >
+          <h2 class="text-xl font-bold">{{title}}</h2>
+          <p>{{content}}</p>
+        </li>
+      </a>
+    {{/each}}
+  </ul>
+</div>
