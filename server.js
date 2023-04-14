@@ -5,11 +5,13 @@ const app = express();
 const path = require("path");
 const dayjs = require("dayjs");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const { User } = require("./models/User.js");
 const { Post } = require("./models/Posts.js");
+const { Comment } = require("./models/Comments.js");
+const { User } = require("./models/User.js");
 const { Sequelize } = require("sequelize");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
+const Handlebars = require("handlebars");
 
 app.engine("handlebars", exphbs.engine());
 app.set("view engine", "handlebars");
@@ -161,12 +163,75 @@ app.post("/signup", async (req, res) => {
 
 app.get("/posts/:id", isAuthenticated, async (req, res) => {
   const post = await Post.findByPk(req.params.id);
+  const comments = await Comment.findAll({
+    where: { post_id: req.params.id },
+    include: [{ model: User, as: "author" }],
+  });
+  console.log(comments);
   const headerData = { username: req.session.username }; // Example data for the header template
   const headerHtml = headerTemplate(headerData); // Render the header template
   res.render("post", {
     post: JSON.parse(JSON.stringify(post)),
+    comment: JSON.parse(JSON.stringify(comments)),
+    postTimestamp: dayjs(post.createdAt).format("MM/DD/YY hh:mmA"),
     header: headerHtml, // Pass the rendered HTML to the header property
   });
+});
+
+app.get("/new", isAuthenticated, async (req, res) => {
+  const headerData = { username: req.session.username }; // Example data for the header template
+  const headerHtml = headerTemplate(headerData); // Render the header template
+  res.render("new", {
+    header: headerHtml, // Pass the rendered HTML to the header property
+  });
+});
+
+app.post("/new", isAuthenticated, async (req, res) => {
+  const { title, content } = req.body;
+  const author_id = req.session.userId;
+  try {
+    const newPost = await Post.create({ author_id, title, content });
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] Post "${
+        newPost.title
+      }" created.`
+    );
+    res.redirect("/");
+  } catch (error) {
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Error creating post: ${error.message}`
+    );
+    res.render("new", {
+      error: `Error creating post: ${error.message}`,
+    });
+  }
+});
+
+app.post("/comment/:id", isAuthenticated, async (req, res) => {
+  console.log(req.params.id);
+  const { content } = req.body;
+  const author_id = req.session.userId;
+  const post_id = req.params.id;
+  try {
+    const newComment = await Comment.create({ post_id, author_id, content });
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] Post "${
+        newComment.content
+      }" created.`
+    );
+    res.redirect(`/posts/${req.params.id}`);
+  } catch (error) {
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Error creating comment: ${error.message}`
+    );
+    res.render("new", {
+      error: `Error creating comment: ${error.message}`,
+    });
+  }
 });
 
 const port = process.env.PORT || 3000;

@@ -1,10 +1,41 @@
 <div
   id="post-container"
-  class="container mx-auto mt-12 rounded-[40px] p-6 shadow-2xl bg-white"
+  class="container mx-auto mt-12 rounded-[40px] bg-white p-6 shadow-2xl"
 >
   {{{header}}}
-  <div class="w-3/4 container mx-auto">
-    <h2 class="text-xl font-bold">{{post.title}}</h2>
+  <div class="container mx-auto w-3/4">
+    <h2 class="inline text-xl font-bold">{{post.title}}</h2>
+    <p class="float-right inline">{{postTimestamp}}</p>
     <p class="mt-4">{{post.content}}</p>
   </div>
+  <form
+    action="/comment/{{post.id}}"
+    method="post"
+    class="container text-center mx-auto mt-6 w-3/4"
+  >
+    <input
+      type="text"
+      id="content"
+      name="content"
+      placeholder="Comment"
+      class="inline w-3/4 rounded border p-2"
+    />
+    <input
+      type="submit"
+      value="Submit"
+      class="inline ml-3 p-2 border bg-red-600 text-white cursor-pointer"
+    />
+  </form>
 </div>
+
+{{#each comment}}
+  <div
+    id="comment-container"
+    class="container mx-auto mt-12 rounded-[40px] p-6 shadow-2xl bg-white"
+  >
+    <div class="container mx-auto w-3/4">
+      <h3 class="inline">{{author.username}}</h3>
+      <p class="inline float-right">{{createdAtFormat}}</p><br />
+      {{content}}</div>
+  </div>
+{{/each}}
