@@ -1,1 +1,8 @@
-<h1>Logged in.</h1>
+<ul>
+  {{#each posts}}
+    <li>
+      <h2>{{posts.title}}</h2>
+      <p>{{posts.content}}</p>
+    </li>
+  {{/each}}
+</ul>

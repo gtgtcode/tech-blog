@@ -6,6 +6,7 @@ const path = require("path");
 const dayjs = require("dayjs");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const { User } = require("./models/User.js");
+const { Post } = require("./models/Posts.js");
 const { Sequelize } = require("sequelize");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -75,12 +76,14 @@ const isAuthenticated = (req, res, next) => {
 
 // Routes
 app.get("/", isAuthenticated, async (req, res) => {
-  const users = await User.findAll({});
-  res.render("index");
+  const posts = await Post.findAll({});
+  console.log(JSON.stringify(posts));
+  res.render("index", { posts: JSON.stringify(posts) });
 });
 
 app.get("/login", async (req, res) => {
   const users = await User.findAll({});
+  console.log(users);
   res.render("login", { users: JSON.stringify(users) });
 });
 
@@ -117,6 +120,32 @@ app.post("/logout", (req, res) => {
       res.redirect("/login");
     }
   });
+});
+
+app.get("/signup", (req, res) => {
+  res.render("signup");
+});
+
+app.post("/signup", async (req, res) => {
+  const { email, username, password } = req.body;
+  try {
+    const newUser = await User.create({ email, username, password });
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format("hh:mm:ssA")} ] User ${
+        newUser.username
+      } created.`
+    );
+    res.redirect("/login");
+  } catch (error) {
+    console.log(
+      `[ ${dayjs(new Date().getTime()).format(
+        "hh:mm:ssA"
+      )} ] Error creating user: ${error.message}`
+    );
+    res.render("signup", {
+      error: `Error creating user: ${error.message}`,
+    });
+  }
 });
 
 const port = process.env.PORT || 3000;

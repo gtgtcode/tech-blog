@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const { User } = require("../models/User");
+const { Post } = require("../models/Posts");
 const dayjs = require("dayjs");
 
 const sequelize = new Sequelize(
@@ -16,32 +16,32 @@ const sequelize = new Sequelize(
   }
 );
 
-User.destroy({ where: {}, truncate: true }).then(
-  User.bulkCreate([
+Post.destroy({ where: {}, truncate: true }).then(
+  Post.bulkCreate([
     {
-      email: "test1@testemail.com",
-      username: "john",
-      password: "password123",
+      author_id: 1,
+      title: "First Post",
+      content: "This is the first post.",
       createdAt: new Date(),
     },
     {
-      email: "test2@testemail.com",
-      username: "jane",
-      password: "password123",
+      author_id: 2,
+      title: "Second Post",
+      content: "This is the second post.",
       createdAt: new Date(),
     },
     {
-      email: "test3@testemail.com",
-      username: "mark",
-      password: "password123",
+      author_id: 3,
+      title: "Third Post",
+      content: "This is the third post.",
       createdAt: new Date(),
     },
   ])
-    .then((users) => {
+    .then((posts) => {
       console.log(
         `[ ${dayjs(new Date().getTime()).format(
           "hh:mm:ssA"
-        )} ] ${JSON.stringify(users)}`
+        )} ] ${JSON.stringify(posts)}`
       );
     })
     .catch((error) => {

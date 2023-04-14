@@ -1,2 +1,15 @@
-{{users}}
-{{error}}
+<div
+  id="login-container"
+  class="container mx-auto mt-12 rounded-[40px] p-6 shadow-2xl bg-white"
+>
+  {{error}}
+  <h1 class="text-center">Login</h1>
+  <form method="post" action="/login">
+    <label for="username">Username:</label><br />
+    <input type="text" id="username" name="username" /><br />
+    <label for="password">Password:</label><br />
+    <input type="password" id="password" name="password" />
+    <input type="submit" value="Submit" />
+  </form>
+  <a href="/signup" class="text-center underline">Sign up instead.</a>
+</div>
