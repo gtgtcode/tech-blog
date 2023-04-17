@@ -10,7 +10,11 @@ Create a .env file in the root directory with your MySQL database connection det
 USERNAME=root
 PASSWORD=yourpassword`
 Run the following commands to create and seed the database:
+`mysql -u root -p`
+`create database techblogdb;`
+`quit`
+`npm run start`
+* Please only seed the application after you've run it for the first time and made a profile.
 `npm run seed`
-Run `npm start` to start the application.
 # Usage
 You can sign up for an account, create blog posts, and leave comments on other users' posts. The homepage displays all the blog posts, and you can click on a post to view the full post and its comments. You can also edit or delete your own posts.
