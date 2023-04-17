@@ -6,9 +6,9 @@ Tech Blog is a blogging platform for technology enthusiasts. You can sign up, cr
 Clone the repository to your local machine.
 Run `npm install` to install the dependencies.
 Create a .env file in the root directory with your MySQL database connection details, like this:
-`DB_NAME=techblogdb
-DB_USER=root
-DB_PASSWORD=yourpassword`
+`DATABASE=techblogdb
+USERNAME=root
+PASSWORD=yourpassword`
 Run the following commands to create and seed the database:
 `npm run seed`
 Run `npm start` to start the application.
